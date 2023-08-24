@@ -23,6 +23,15 @@ spring:
     prefix:
     check-template-location: false
 
+encryption:
+  salt:
+    rounds: 10
+
+jwt:
+  algorithm:
+    key: SuperSecureSecretKey
+  issuer: eCommerce
+  expiryInSeconds: 604800
 
 
 #  mail:

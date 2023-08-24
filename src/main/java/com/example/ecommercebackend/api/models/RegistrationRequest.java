@@ -8,7 +8,7 @@ import lombok.Getter;
  */
  
 @Getter
-public class RegistrationRequestBody {
+public class RegistrationRequest {
 
     @NotBlank
     @NotNull
