@@ -9,14 +9,21 @@ spring:
     username: postgres
     password: Gios#5663
     url: jdbc:postgresql://localhost:5432/ecommerce-backend
+    driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
     show-sql: true
+    open-in-view: false
+  thymeleaf:
+    prefix:
+    check-template-location: false
+
+
 
 #  mail:
 #    host: smtp.gmail.com
