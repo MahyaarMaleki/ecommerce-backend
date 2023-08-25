@@ -1,19 +1,17 @@
 package com.example.ecommercebackend.models.repositories;
 
 import com.example.ecommercebackend.models.LocalUser;
+import com.example.ecommercebackend.models.WebOrder;
 import org.springframework.data.repository.ListCrudRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.Optional;
+import java.util.List;
 
 /**
  * @author Mahyar Maleki
  */
 
 @Repository
-public interface UserRepository extends ListCrudRepository<LocalUser, Long> {
-    Optional<LocalUser> findByUsernameIgnoreCase(String username);
-
-    Optional<LocalUser> findByEmailIgnoreCase(String email);
-
+public interface WebOrderRepository extends ListCrudRepository<WebOrder, Long> {
+    List<WebOrder> findByLocalUser(LocalUser localUser);
 }

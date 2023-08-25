@@ -6,7 +6,6 @@ import com.example.ecommercebackend.exceptions.UserAlreadyExistsException;
 import com.example.ecommercebackend.models.LocalUser;
 import com.example.ecommercebackend.models.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.Validator;
 
@@ -26,8 +25,6 @@ public class UserService {
     private final JWTService jwtService;
 
     private final Validator validator;
-
-    private final static String USER_NOT_FOUND_MSG = "user with username %s does not exist!";
 
     public LocalUser registerUser(RegistrationRequest registrationRequest) throws UserAlreadyExistsException {
         if(userRepository.findByEmailIgnoreCase(registrationRequest.getEmail()).isPresent()
