@@ -1,4 +1,4 @@
-package com.example.ecommercebackend.api.controllers.order;
+package com.example.ecommercebackend.api.controllers.product;
 
 import com.example.ecommercebackend.models.Product;
 import com.example.ecommercebackend.services.ProductService;

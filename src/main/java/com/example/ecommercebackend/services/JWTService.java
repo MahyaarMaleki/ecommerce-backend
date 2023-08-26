@@ -27,7 +27,7 @@ public class JWTService {
 
     private Algorithm algorithm;
 
-    private final static String USERNAME_KEY = "USERNAME";
+    private static final String USERNAME_KEY = "USERNAME";
 
     @PostConstruct
     public void postConstruct() {
