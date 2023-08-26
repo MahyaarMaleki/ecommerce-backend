@@ -3,6 +3,7 @@ package com.example.ecommercebackend.api.controllers.auth;
 import com.example.ecommercebackend.api.models.LoginRequest;
 import com.example.ecommercebackend.api.models.LoginResponse;
 import com.example.ecommercebackend.api.models.RegistrationRequest;
+import com.example.ecommercebackend.exceptions.EmailFailureException;
 import com.example.ecommercebackend.exceptions.UserAlreadyExistsException;
 import com.example.ecommercebackend.models.LocalUser;
 import com.example.ecommercebackend.services.UserService;
@@ -30,6 +31,8 @@ public class AuthenticationController {
             return ResponseEntity.ok().build();
         } catch (UserAlreadyExistsException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        } catch (EmailFailureException ex) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 

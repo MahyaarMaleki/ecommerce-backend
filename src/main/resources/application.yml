@@ -4,12 +4,14 @@ server:
     include-message: always
     include-binding-errors: always
 
+# Database connection & configuration
 spring:
   datasource:
     username: postgres
     password: Gios#5663
     url: jdbc:postgresql://localhost:5432/ecommerce-backend
     driver-class-name: org.postgresql.Driver
+
   jpa:
     hibernate:
       ddl-auto: update
@@ -23,26 +25,25 @@ spring:
     prefix:
     check-template-location: false
 
+# Encryption configuration
 encryption:
   salt:
     rounds: 10
 
+# JWT configuration
 jwt:
   algorithm:
     key: SuperSecureSecretKey
   issuer: eCommerce
   expiryInSeconds: 604800
 
+# email configuration
+email:
+  from: no-reply@ecommerce.com
 
-#  mail:
-#    host: smtp.gmail.com
-#    port: 587
-#    username: yourEmail
-#    password: yourPassword
-#    properties:
-#      mail:
-#        smtp:
-#          auth: true
-#          starttls:
-#            enable: true
+# General configuration
+app:
+  frontend:
+    url: http://ecommerce.com
+
 

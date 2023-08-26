@@ -18,8 +18,8 @@ public class WebOrder {
     private Long id;
 
     @ManyToOne(optional = false)
-    @JoinColumn(name = "local_user_id", nullable = false)
-    private LocalUser localUser;
+    @JoinColumn(name = "user_id", nullable = false)
+    private LocalUser user;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "address_id", nullable = false)
