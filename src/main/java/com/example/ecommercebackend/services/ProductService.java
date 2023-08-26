@@ -1,7 +1,7 @@
 package com.example.ecommercebackend.services;
 
 import com.example.ecommercebackend.models.Product;
-import com.example.ecommercebackend.models.repositories.ProductRepository;
+import com.example.ecommercebackend.models.DAOs.ProductDAO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -14,10 +14,10 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class ProductService {
-    private final ProductRepository productRepository;
+    private final ProductDAO productDAO;
 
 
     public List<Product> getProducts() {
-        return productRepository.findAll();
+        return productDAO.findAll();
     }
 }

@@ -2,7 +2,7 @@ package com.example.ecommercebackend.api.security;
 
 import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.example.ecommercebackend.models.LocalUser;
-import com.example.ecommercebackend.models.repositories.UserRepository;
+import com.example.ecommercebackend.models.DAOs.LocalUserDAO;
 import com.example.ecommercebackend.services.JWTService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -27,7 +27,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class JWTRequestFilter extends OncePerRequestFilter {
 
-    private final UserRepository userRepository;
+    private final LocalUserDAO localUserDAO;
 
     private final JWTService jwtService;
 
@@ -38,7 +38,7 @@ public class JWTRequestFilter extends OncePerRequestFilter {
             String token = tokenHeader.substring(7);
             try {
                 String username = jwtService.getUsername(token);
-                Optional<LocalUser> optionalUser = userRepository.findByUsernameIgnoreCase(username);
+                Optional<LocalUser> optionalUser = localUserDAO.findByUsernameIgnoreCase(username);
                 if(optionalUser.isPresent()) {
                     LocalUser user = optionalUser.get();
                     UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(user, null, new ArrayList<>());

@@ -38,7 +38,12 @@ public class LocalUser {
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Address> addresses = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("id desc")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<VerificationToken> verificationTokens = new ArrayList<>();
+
+    @JsonIgnore
+    @Column(name = "is_email_verified", nullable = false)
+    private Boolean isEmailVerified = false;
 
 }

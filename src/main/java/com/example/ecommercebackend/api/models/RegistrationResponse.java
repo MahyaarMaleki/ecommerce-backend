@@ -11,9 +11,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter
 @Setter
-public class LoginResponse {
-    private String jwt;
-
+public class RegistrationResponse {
     private boolean isSuccessful;
 
     private String responseMessage;

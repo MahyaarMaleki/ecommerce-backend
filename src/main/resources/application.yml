@@ -1,8 +1,6 @@
+# Server configuration
 server:
   port: 9191
-  error:
-    include-message: always
-    include-binding-errors: always
 
 # Database connection & configuration
 spring:
@@ -24,6 +22,21 @@ spring:
   thymeleaf:
     prefix:
     check-template-location: false
+  # SMTP configuration
+  mail:
+    host: localhost
+    port: 25
+
+#    username:
+#    password:
+#    properties:
+#      mail:
+#        smtp:
+#          auth: true
+#          starttls:
+#            enable: true
+
+
 
 # Encryption configuration
 encryption:
@@ -35,7 +48,10 @@ jwt:
   algorithm:
     key: SuperSecureSecretKey
   issuer: eCommerce
-  expiryInSeconds: 604800
+  expiryInSeconds: 604800 # a week
+
+  verification:
+    expiryInSeconds: 1800 # half an hour
 
 # email configuration
 email:

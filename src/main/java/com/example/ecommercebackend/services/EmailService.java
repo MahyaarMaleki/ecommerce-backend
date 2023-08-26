@@ -23,7 +23,7 @@ public class EmailService {
     @Value("${app.frontend.url}")
     private String url;
 
-    private JavaMailSender javaMailSender;
+    private final JavaMailSender mailSender;
 
     private static final String VERIFICATION_EMAIL_SUBJECT = "Verify your email to complete your registration and activate your account.";
     private static final String VERIFICATION_EMAIL_TEXT = "Please follow the link bellow to verify your email and activate your account.";
@@ -42,7 +42,7 @@ public class EmailService {
         mailMessage.setText(VERIFICATION_EMAIL_TEXT + "\n" + url + "/auth/verify?token=" + verificationToken.getToken());
 
         try {
-            javaMailSender.send(mailMessage);
+            mailSender.send(mailMessage);
         } catch (MailException e) {
             throw new EmailFailureException();
         }
