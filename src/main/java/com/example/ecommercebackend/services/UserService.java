@@ -11,9 +11,7 @@ import com.example.ecommercebackend.models.repositories.LocalUserRepository;
 import com.example.ecommercebackend.models.repositories.VerificationTokenRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.Validator;
 
 import java.sql.Timestamp;
 import java.util.List;
@@ -36,7 +34,6 @@ public class UserService {
 
     private final EmailService emailService;
 
-    private final Validator validator;
 
     public LocalUser registerUser(RegistrationRequest registrationRequest) throws UserAlreadyExistsException, EmailFailureException {
         if(localUserRepository.findByEmailIgnoreCase(registrationRequest.getEmail()).isPresent()
@@ -76,7 +73,7 @@ public class UserService {
             if(!user.getIsEmailVerified()) {
                 user.setIsEmailVerified(true);
                 localUserRepository.save(user);
-                verificationToken.getUser().getVerificationTokens().remove(verificationToken);
+                user.getVerificationTokens().remove(verificationToken);
                 return true;
             }
         }

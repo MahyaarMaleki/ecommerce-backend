@@ -21,6 +21,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
 
+
 /**
  * @author Mahyar Maleki
  */
@@ -56,6 +57,7 @@ public class UserServiceTest {
         registrationRequest.setUsername("UserServiceTest$testRegisterUserA");
         Assertions.assertThrows(UserAlreadyExistsException.class,
                 () -> userService.registerUser(registrationRequest), "Email should already be in use.");
+
 
         registrationRequest.setEmail("UserServiceTest$testRegisterUser@junit.com");
         Assertions.assertDoesNotThrow(() -> userService.registerUser(registrationRequest), "User should register successfully.");
@@ -103,13 +105,16 @@ public class UserServiceTest {
         loginRequest.setPassword("PasswordB123");
         try {
             userService.loginUser(loginRequest);
-            Assertions.fail("The user should not have email verified.");
-        } catch (UserNotVerifiedException e) {
-            if(e.isNewEmailSent()) {
-                Assertions.assertTrue(true, "Verification email should be resent.");
-            } else {
-                Assertions.assertFalse(false, "Verification email should not be resent.");
-            }
+            Assertions.fail("User should not have email verified.");
+        } catch (UserNotVerifiedException ex) {
+            Assertions.assertTrue(ex.isNewEmailSent(), "Email verification should be sent.");
+            Assertions.assertEquals(1, greenMailExtension.getReceivedMessages().length);
+        }
+        try {
+            userService.loginUser(loginRequest);
+            Assertions.fail("User should not have email verified.");
+        } catch (UserNotVerifiedException ex) {
+            Assertions.assertFalse(ex.isNewEmailSent(), "Email verification should not be resent.");
             Assertions.assertEquals(1, greenMailExtension.getReceivedMessages().length);
         }
 
