@@ -1,24 +1,26 @@
 # Server configuration
 server:
   port: 9191
-
+  error:
+    include-message: always
+    include-binding-errors: always
 # Database connection & configuration
 spring:
   datasource:
     username: postgres
     password: Gios#5663
     url: jdbc:postgresql://localhost:5432/ecommerce-backend
-    driver-class-name: org.postgresql.Driver
+
 
   jpa:
     hibernate:
       ddl-auto: update
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
-        format_sql: true
-    show-sql: true
-    open-in-view: false
+#    properties:
+#      hibernate:
+#        dialect: org.hibernate.dialect.PostgreSQLDialect
+#        format_sql: true
+#    show-sql: true
+#    open-in-view: false
   thymeleaf:
     prefix:
     check-template-location: false
@@ -49,9 +51,6 @@ jwt:
     key: SuperSecureSecretKey
   issuer: eCommerce
   expiryInSeconds: 604800 # a week
-
-  verification:
-    expiryInSeconds: 1800 # half an hour
 
 # email configuration
 email:
