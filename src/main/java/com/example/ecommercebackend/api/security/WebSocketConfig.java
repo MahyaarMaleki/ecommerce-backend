@@ -28,6 +28,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     private final ApplicationContext context;
 
+    private final JWTRequestFilter jwtRequestFilter;
+
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/websocket").setAllowedOriginPatterns("**").withSockJS();
@@ -45,8 +47,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         AuthorizationChannelInterceptor authInterceptor = new AuthorizationChannelInterceptor(authorizationManager);
         AuthorizationEventPublisher publisher = new SpringAuthorizationEventPublisher(context);
         authInterceptor.setAuthorizationEventPublisher(publisher);
-        registration.interceptors(authInterceptor);
-
+        registration.interceptors(jwtRequestFilter, authInterceptor);
     }
 
     private AuthorizationManager<Message<?>> makeMessageAuthorizationManager() {
