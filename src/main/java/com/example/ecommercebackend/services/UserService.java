@@ -75,7 +75,7 @@ public class UserService {
             if(!user.getIsEmailVerified()) {
                 user.setIsEmailVerified(true);
                 userRepository.save(user);
-                user.getVerificationTokens().remove(verificationToken);
+                verificationTokenRepository.delete(verificationToken);
                 return true;
             }
         }

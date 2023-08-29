@@ -3,6 +3,7 @@ package com.example.ecommercebackend.api.controllers.product;
 import com.example.ecommercebackend.models.Product;
 import com.example.ecommercebackend.services.ProductService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,7 +21,7 @@ public class ProductController {
     private final ProductService productService;
 
     @GetMapping
-    public List<Product> getProducts() {
-        return productService.getProducts();
+    public ResponseEntity<List<Product>> getProducts() {
+        return ResponseEntity.ok(productService.getProducts());
     }
 }

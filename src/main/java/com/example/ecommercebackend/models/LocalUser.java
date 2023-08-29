@@ -43,7 +43,7 @@ public class LocalUser implements UserDetails {
 
     @JsonIgnore
     @OrderBy("id desc")
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<VerificationToken> verificationTokens = new ArrayList<>();
 
     @Column(name = "is_email_verified", nullable = false)
