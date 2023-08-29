@@ -1,8 +1,10 @@
 package com.example.ecommercebackend.services;
 
 import com.example.ecommercebackend.api.models.LoginRequest;
+import com.example.ecommercebackend.api.models.PasswordResetRequest;
 import com.example.ecommercebackend.api.models.RegistrationRequest;
 import com.example.ecommercebackend.exceptions.EmailFailureException;
+import com.example.ecommercebackend.exceptions.EmailNotFoundException;
 import com.example.ecommercebackend.exceptions.UserAlreadyExistsException;
 import com.example.ecommercebackend.exceptions.UserNotVerifiedException;
 import com.example.ecommercebackend.models.LocalUser;
@@ -24,7 +26,7 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class UserService {
-    private final LocalUserRepository localUserRepository;
+    private final LocalUserRepository userRepository;
 
     private final VerificationTokenRepository verificationTokenRepository;
 
@@ -36,8 +38,8 @@ public class UserService {
 
 
     public LocalUser registerUser(RegistrationRequest registrationRequest) throws UserAlreadyExistsException, EmailFailureException {
-        if(localUserRepository.findByEmailIgnoreCase(registrationRequest.getEmail()).isPresent()
-                || localUserRepository.findByUsernameIgnoreCase(registrationRequest.getUsername()).isPresent()) {
+        if(userRepository.findByEmailIgnoreCase(registrationRequest.getEmail()).isPresent()
+                || userRepository.findByUsernameIgnoreCase(registrationRequest.getUsername()).isPresent()) {
             throw new UserAlreadyExistsException();
         }
         LocalUser user = new LocalUser();
@@ -51,7 +53,7 @@ public class UserService {
 
         emailService.sendVerificationEmail(verificationToken);
 
-        return localUserRepository.save(user);
+        return userRepository.save(user);
     }
 
     private VerificationToken createVerificationToken(LocalUser user) {
@@ -72,7 +74,7 @@ public class UserService {
             LocalUser user = verificationToken.getUser();
             if(!user.getIsEmailVerified()) {
                 user.setIsEmailVerified(true);
-                localUserRepository.save(user);
+                userRepository.save(user);
                 user.getVerificationTokens().remove(verificationToken);
                 return true;
             }
@@ -81,7 +83,7 @@ public class UserService {
     }
 
     public String loginUser(LoginRequest loginRequest) throws UserNotVerifiedException, EmailFailureException {
-        Optional<LocalUser> optionalUser = localUserRepository.findByUsernameIgnoreCase(loginRequest.getUsername());
+        Optional<LocalUser> optionalUser = userRepository.findByUsernameIgnoreCase(loginRequest.getUsername());
         if(optionalUser.isPresent()) {
             LocalUser user = optionalUser.get();
             if(encryptionService.verifyPassword(loginRequest.getPassword(), user.getPassword())) {
@@ -94,7 +96,7 @@ public class UserService {
                         resend = true;
                     } else {
                         resend = verificationTokens.get(0).getCreatedTimestamp().before(
-                                new Timestamp(System.currentTimeMillis() - (1000L * 30 * 60))); // half an hour
+                                new Timestamp(System.currentTimeMillis() - (1000L * 60 * 30))); // half an hour
                     }
 
                     if(resend) {
@@ -109,4 +111,17 @@ public class UserService {
         return null;
     }
 
+    public void forgotPassword(String email) throws EmailNotFoundException, EmailFailureException {
+        LocalUser user = userRepository.findByEmailIgnoreCase(email).orElseThrow(EmailNotFoundException::new);
+        String token = jwtService.generatePasswordResetJWT(user);
+        emailService.sendPasswordResetEmail(user, token);
+    }
+
+    @Transactional
+    public void resetPassword(PasswordResetRequest passwordResetRequest) throws EmailNotFoundException {
+        String email = jwtService.getResetPasswordEmail(passwordResetRequest.getToken());
+        LocalUser user = userRepository.findByEmailIgnoreCase(email).orElseThrow(EmailNotFoundException::new);
+        user.setPassword(encryptionService.encryptPassword(passwordResetRequest.getNewPassword()));
+        userRepository.save(user);
+    }
 }

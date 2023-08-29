@@ -1,11 +1,15 @@
 package com.example.ecommercebackend.services;
 
 import com.example.ecommercebackend.api.models.LoginRequest;
+import com.example.ecommercebackend.api.models.PasswordResetRequest;
 import com.example.ecommercebackend.api.models.RegistrationRequest;
 import com.example.ecommercebackend.exceptions.EmailFailureException;
+import com.example.ecommercebackend.exceptions.EmailNotFoundException;
 import com.example.ecommercebackend.exceptions.UserAlreadyExistsException;
 import com.example.ecommercebackend.exceptions.UserNotVerifiedException;
+import com.example.ecommercebackend.models.LocalUser;
 import com.example.ecommercebackend.models.VerificationToken;
+import com.example.ecommercebackend.models.repositories.LocalUserRepository;
 import com.example.ecommercebackend.models.repositories.VerificationTokenRepository;
 import com.icegreen.greenmail.configuration.GreenMailConfiguration;
 import com.icegreen.greenmail.junit5.GreenMailExtension;
@@ -40,6 +44,15 @@ public class UserServiceTest {
     private UserService userService;
 
     @Autowired
+    private JWTService jwtService;
+
+    @Autowired
+    private LocalUserRepository userRepository;
+
+    @Autowired
+    private EncryptionService encryptionService;
+
+    @Autowired
     private VerificationTokenRepository verificationTokenRepository;
 
     @Test
@@ -64,8 +77,8 @@ public class UserServiceTest {
         registrationRequest.setEmail("UserServiceTest$testRegisterUser@junit.com");
         Assertions.assertDoesNotThrow(() -> userService.registerUser(registrationRequest), "User should register successfully.");
 
-        Assertions.assertEquals(registrationRequest.getEmail(),
-                greenMailExtension.getReceivedMessages()[0].getRecipients(Message.RecipientType.TO)[0].toString());
+        Assertions.assertEquals(registrationRequest.getEmail(), greenMailExtension.getReceivedMessages()[0].getRecipients(Message.RecipientType.TO)[0].toString(),
+                "Verification email should be sent successfully.");
     }
 
     @Test
@@ -120,6 +133,30 @@ public class UserServiceTest {
             Assertions.assertEquals(1, greenMailExtension.getReceivedMessages().length);
         }
 
+    }
+
+    @Test
+    @Transactional
+    public void testForgotPassword() throws MessagingException {
+        Assertions.assertThrows(EmailNotFoundException.class, () -> userService.forgotPassword("userNotExist@junit.com"), "Email should not exist.");
+        Assertions.assertDoesNotThrow(() -> userService.forgotPassword("UserA@junit.com"), "Non existing email should be rejected");
+        Assertions.assertEquals("UserA@junit.com", greenMailExtension.getReceivedMessages()[0].getRecipients(Message.RecipientType.TO)[0].toString(),
+                "Password reset email should be sent successfully.");
+    }
+
+    @Test
+    @Transactional
+    public void testResetPassword() throws EmailNotFoundException {
+        PasswordResetRequest passwordResetRequest = new PasswordResetRequest();
+        LocalUser user = userRepository.findByUsernameIgnoreCase("UserA").get();
+        String token = jwtService.generatePasswordResetJWT(user);
+        passwordResetRequest.setToken(token);
+        passwordResetRequest.setNewPassword("Password!123456");
+        userService.resetPassword(passwordResetRequest);
+        user = userRepository.findByUsernameIgnoreCase("UserA").get();
+
+        Assertions.assertTrue(encryptionService.verifyPassword(passwordResetRequest.getNewPassword(), user.getPassword()),
+                "Password change should be written in the DB");
     }
 
 }

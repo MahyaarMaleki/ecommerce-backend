@@ -1,18 +1,11 @@
 package com.example.ecommercebackend.api.models;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
-
 /**
  * @author Mahyar Maleki
  */
 
-@AllArgsConstructor
-@Getter
-@Setter
-public class VerificationResponse {
-    private boolean isSuccessful;
-
-    private String responseMessage;
+public class VerificationResponse extends BaseResponse {
+    public VerificationResponse(boolean isSuccessful, String responseMessage) {
+        super(isSuccessful, responseMessage);
+    }
 }

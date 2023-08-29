@@ -25,7 +25,8 @@ public class WebSecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .cors(cors -> cors.disable())
                 .authorizeHttpRequests(auth -> {
-                    auth.requestMatchers("/product", "/auth/register", "/auth/login", "/auth/verify", "/error").permitAll();
+                    auth.requestMatchers("/product", "/auth/register", "/auth/login", "/auth/verify",
+                            "/error", "/auth/forgot", "/auth/reset").permitAll();
                     auth.anyRequest().authenticated();
                 })
 
