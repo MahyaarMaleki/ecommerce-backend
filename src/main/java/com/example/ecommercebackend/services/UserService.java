@@ -124,4 +124,8 @@ public class UserService {
         user.setPassword(encryptionService.encryptPassword(passwordResetRequest.getNewPassword()));
         userRepository.save(user);
     }
+
+    public boolean userHasPermission(LocalUser user, Long id) {
+        return user.getId() == id;
+    }
 }
