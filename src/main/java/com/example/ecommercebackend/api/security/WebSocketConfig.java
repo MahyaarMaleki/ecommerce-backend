@@ -97,20 +97,23 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         public Message<?> preSend(Message<?> message, MessageChannel channel) {
             if(message.getHeaders().get("simpMessageType").equals(SimpMessageType.SUBSCRIBE)) {
                 String destination = (String) message.getHeaders().get("simpDestination");
-                Map<String, String> params = MATCHER.extractUriTemplateVariables("/topic/user/{userId}/**", destination);
-                try {
-                    Long userId = Long.valueOf(params.get("userId"));
-                    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-                    if(authentication != null) {
-                        LocalUser user = (LocalUser) authentication.getPrincipal();
-                        if(!userService.userHasPermission(user, userId)) {
+                String userTopicMatcher = "/topic/user/{userId}/**";
+                if(MATCHER.match(userTopicMatcher, destination)) {
+                    Map<String, String> params = MATCHER.extractUriTemplateVariables(userTopicMatcher, destination);
+                    try {
+                        Long userId = Long.valueOf(params.get("userId"));
+                        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+                        if(authentication != null) {
+                            LocalUser user = (LocalUser) authentication.getPrincipal();
+                            if(!userService.userHasPermission(user, userId)) {
+                                message = null;
+                            }
+                        } else {
                             message = null;
                         }
-                    } else {
+                    } catch (NumberFormatException e) {
                         message = null;
                     }
-                } catch (NumberFormatException e) {
-                    message = null;
                 }
             }
             return message;
