@@ -15,6 +15,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -24,7 +25,7 @@ import org.springframework.web.bind.annotation.*;
  */
 
 @RestController
-@RequestMapping(path = "/auth")
+@RequestMapping(path = "/auth", consumes = {MediaType.APPLICATION_JSON_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE})
 @RequiredArgsConstructor
 @Tag(name = "authentication")
 public class AuthenticationController {
@@ -95,8 +96,8 @@ public class AuthenticationController {
     @Operation(summary = "Get currently logged in user's info")
     @ApiResponse(responseCode = "403", description = "You need to login first.")
     @GetMapping(path = "/me")
-    public LocalUser getLoggedInUserProfile(@AuthenticationPrincipal LocalUser user) {
-        return user;
+    public ResponseEntity<LocalUser> getLoggedInUserProfile(@AuthenticationPrincipal LocalUser user) {
+        return ResponseEntity.ok(user);
     }
 
     @Operation(summary = "Request a forgot password operation", description = "Request a forgot password operation by providing user's email to receive password reset token.")

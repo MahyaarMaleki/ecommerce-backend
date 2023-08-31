@@ -46,6 +46,7 @@ public class LocalUser implements UserDetails {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<VerificationToken> verificationTokens = new ArrayList<>();
 
+    @JsonIgnore
     @Column(name = "is_email_verified", nullable = false)
     private Boolean isEmailVerified = false;
 
