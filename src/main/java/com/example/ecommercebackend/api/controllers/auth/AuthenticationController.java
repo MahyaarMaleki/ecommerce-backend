@@ -7,6 +7,10 @@ import com.example.ecommercebackend.exceptions.UserAlreadyExistsException;
 import com.example.ecommercebackend.exceptions.UserNotVerifiedException;
 import com.example.ecommercebackend.models.LocalUser;
 import com.example.ecommercebackend.services.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +30,13 @@ import org.springframework.web.bind.annotation.*;
 public class AuthenticationController {
     private final UserService userService;
 
+    @Operation(summary = "Register a new user", description = "Register a new user by providing a valid registration request body.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "409", description = "User with the specified username or email already exists.", content = @Content),
+            @ApiResponse(responseCode = "400", description = "All the fields must be valid.", content = @Content),
+            @ApiResponse(responseCode = "500", description = "Failed to send verification email.", content = @Content),
+            @ApiResponse(responseCode = "200", description = "Registered successfully.")
+    })
     @PostMapping(path = "/register")
     public ResponseEntity<RegistrationResponse> registerUser(@Valid @RequestBody RegistrationRequest registrationRequest) {
         try {
@@ -38,6 +49,11 @@ public class AuthenticationController {
         }
     }
 
+    @Operation(summary = "Verify a newly registered user", description = "Verifies the newly registered user to be able to login by verification token.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "409", description = "Provided verification token does not exist or the user is already verified.", content = @Content),
+            @ApiResponse(responseCode = "200", description = "Verified successfully.")
+    })
     @PostMapping(path = "/verify")
     public ResponseEntity<VerificationResponse> verifyUser(@RequestParam String token) {
         if(userService.verifyUser(token)) {
@@ -47,6 +63,13 @@ public class AuthenticationController {
         }
     }
 
+    @Operation(summary = "Login with an existing user", description = "Login with an existing user by providing their username and password.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "403", description = "User is not verified.", content = @Content),
+            @ApiResponse(responseCode = "400", description = "User does not exist or at least one field is invalid.", content = @Content),
+            @ApiResponse(responseCode = "500", description = "Failed to resend verification email.", content = @Content),
+            @ApiResponse(responseCode = "200", description = "logged in successfully.")
+    })
     @PostMapping(path = "/login")
     public ResponseEntity<LoginResponse> loginUser(@Valid @RequestBody LoginRequest loginRequest) {
         String jwt = null;
@@ -69,11 +92,19 @@ public class AuthenticationController {
         }
     }
 
+    @Operation(summary = "Get currently logged in user's info")
+    @ApiResponse(responseCode = "403", description = "You need to login first.")
     @GetMapping(path = "/me")
     public LocalUser getLoggedInUserProfile(@AuthenticationPrincipal LocalUser user) {
         return user;
     }
 
+    @Operation(summary = "Request a forgot password operation", description = "Request a forgot password operation by providing user's email to receive password reset token.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "400", description = "User with specified email does not exist.", content = @Content),
+            @ApiResponse(responseCode = "500", description = "Failed to send email.", content = @Content),
+            @ApiResponse(responseCode = "200", description = "Operation was successfully.")
+    })
     @PostMapping(path = "/forgot")
     public ResponseEntity<BaseResponse> forgotPassword(@RequestParam String email) {
         try {
@@ -86,6 +117,12 @@ public class AuthenticationController {
         }
     }
 
+    @Operation(summary = "Reset a user's password", description = "Reset a user's password by providing the reset password token and a valid password.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "400", description = "User with specified email does not exist or at least one field is invalid.", content = @Content),
+            @ApiResponse(responseCode = "500", description = "Failed to send email.", content = @Content),
+            @ApiResponse(responseCode = "200", description = "Password changed successfully.")
+    })
     @PostMapping(path = "/reset")
     public ResponseEntity<BaseResponse> resetPassword(@Valid @RequestBody PasswordResetRequest passwordResetRequest) {
         try {
