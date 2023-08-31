@@ -19,25 +19,25 @@ public class OpenApiConfig {
 
     @Bean
     public OpenAPI customOpenAPI() {
-        return new OpenAPI().addSecurityItem(new SecurityRequirement().
-                        addList("Bearer Authentication"))
+        return new OpenAPI().addSecurityItem(new SecurityRequirement()
+                        .addList("Basic Authorization").addList("Bearer Authentication"))
                 .components(getComponents())
                 .info(getInfo());
     }
 
     private Components getComponents() {
-        return new Components().addSecuritySchemes("basicAuth", createBasicSecurityScheme())
-                .addSecuritySchemes("bearerAuth", createAPIKeyScheme());
+        return new Components().addSecuritySchemes("Basic Authorization", createBasicSecurityScheme())
+                .addSecuritySchemes("Bearer Authorization", createAPIKeyScheme());
 
     }
 
     private SecurityScheme createBasicSecurityScheme() {
-        return new SecurityScheme().name("basicAuth").type(SecurityScheme.Type.HTTP)
+        return new SecurityScheme().name("Basic Authorization").type(SecurityScheme.Type.HTTP)
                 .scheme("Basic");
     }
 
     private SecurityScheme createAPIKeyScheme() {
-        return new SecurityScheme().name("bearerAuth").type(SecurityScheme.Type.HTTP)
+        return new SecurityScheme().name("Bearer Authorization").type(SecurityScheme.Type.HTTP)
                 .bearerFormat("JWT").scheme("Bearer").in(SecurityScheme.In.HEADER);
     }
 
