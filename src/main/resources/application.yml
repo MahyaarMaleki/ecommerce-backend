@@ -10,21 +10,26 @@ spring:
     username: postgres
     password: Gios#5663
     url: jdbc:postgresql://localhost:5432/ecommerce-backend
-
-
+# Spring security configuration
+  security:
+    user:
+      name: spring
+      password: spring
+# Spring jpa configuration
   jpa:
     hibernate:
       ddl-auto: update
-#    properties:
-#      hibernate:
-#        dialect: org.hibernate.dialect.PostgreSQLDialect
-#        format_sql: true
-#    show-sql: true
-#    open-in-view: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+    show-sql: true
+    open-in-view: false
+# Spring thymeleaf configuration
   thymeleaf:
     prefix:
     check-template-location: false
-  # SMTP configuration
+# SMTP configuration
   mail:
     host: localhost
     port: 25
@@ -38,8 +43,12 @@ spring:
 #          starttls:
 #            enable: true
 
-
-
+# Springdoc openapi configuration
+springdoc:
+  swagger-ui:
+    filter: true
+    operations-sorter: method
+  show-actuator: true
 # Encryption configuration
 encryption:
   salt:
