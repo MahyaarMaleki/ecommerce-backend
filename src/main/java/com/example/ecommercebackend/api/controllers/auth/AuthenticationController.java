@@ -7,6 +7,7 @@ import com.example.ecommercebackend.exceptions.UserAlreadyExistsException;
 import com.example.ecommercebackend.exceptions.UserNotVerifiedException;
 import com.example.ecommercebackend.models.LocalUser;
 import com.example.ecommercebackend.services.UserService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping(path = "/auth")
 @RequiredArgsConstructor
+@Tag(name = "authentication")
 public class AuthenticationController {
     private final UserService userService;
 

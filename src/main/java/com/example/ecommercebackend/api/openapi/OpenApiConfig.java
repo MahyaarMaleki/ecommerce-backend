@@ -7,8 +7,11 @@ import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
+import io.swagger.v3.oas.models.servers.Server;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.util.List;
 
 /**
  * @author Mahyar Maleki
@@ -20,24 +23,25 @@ public class OpenApiConfig {
     @Bean
     public OpenAPI customOpenAPI() {
         return new OpenAPI().addSecurityItem(new SecurityRequirement()
-                        .addList("Basic Authorization").addList("Bearer Authentication"))
+                        .addList("basicAuth").addList("bearerAuth"))
                 .components(getComponents())
-                .info(getInfo());
+                .info(getInfo())
+                .servers(getServers());
     }
 
     private Components getComponents() {
-        return new Components().addSecuritySchemes("Basic Authorization", createBasicSecurityScheme())
-                .addSecuritySchemes("Bearer Authorization", createAPIKeyScheme());
+        return new Components().addSecuritySchemes("basicAuth", createBasicSecurityScheme())
+                .addSecuritySchemes("bearerAuth", createAPIKeyScheme());
 
     }
 
     private SecurityScheme createBasicSecurityScheme() {
-        return new SecurityScheme().name("Basic Authorization").type(SecurityScheme.Type.HTTP)
+        return new SecurityScheme().name("basicAuth").type(SecurityScheme.Type.HTTP)
                 .scheme("Basic");
     }
 
     private SecurityScheme createAPIKeyScheme() {
-        return new SecurityScheme().name("Bearer Authorization").type(SecurityScheme.Type.HTTP)
+        return new SecurityScheme().name("bearerAuth").type(SecurityScheme.Type.HTTP)
                 .bearerFormat("JWT").scheme("Bearer").in(SecurityScheme.In.HEADER);
     }
 
@@ -53,5 +57,17 @@ public class OpenApiConfig {
 
     private License getLicense() {
         return new License().name("License of API").url("API license URL");
+    }
+
+    private List<Server> getServers() {
+        Server devServer = new Server();
+        devServer.setDescription("development stage URL");
+        devServer.setUrl("http://localhost:9191/");
+
+        Server prodServer = new Server();
+        prodServer.setDescription("production stage URL");
+        prodServer.setUrl("company-name.com");
+
+        return List.of(devServer, prodServer);
     }
 }

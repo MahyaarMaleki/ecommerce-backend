@@ -3,6 +3,7 @@ package com.example.ecommercebackend.api.controllers.order;
 import com.example.ecommercebackend.models.LocalUser;
 import com.example.ecommercebackend.models.WebOrder;
 import com.example.ecommercebackend.services.WebOrderService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -19,6 +20,7 @@ import java.util.List;
 @RestController
 @RequestMapping(path = "/order")
 @RequiredArgsConstructor
+@Tag(name = "order")
 public class WebOrderController {
     private final WebOrderService webOrderService;
 
