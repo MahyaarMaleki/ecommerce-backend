@@ -1,9 +1,9 @@
 package com.example.ecommercebackend.api.models;
 
+import com.example.ecommercebackend.annotation.ValidPassword;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -26,9 +26,6 @@ public class LoginRequest {
 
     @Schema(title = "Password",example = "Password!123", minLength = 6, maxLength = 32,
             description = "Password must contain at least one lowercase letter, one uppercase letter, one number and one special character.")
-    @NotBlank
-    @NotNull
-    @Size(min = 6, max = 32)
-    @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#&()–[{}]:;',?/*~$^+=<>]).{6,32}$")
+    @ValidPassword
     private String password;
 }
